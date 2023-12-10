@@ -1,0 +1,62 @@
+name:  movie-picture-workflow
+
+# Triggers (manual & auto)
+on:
+  workflow_dispatch
+  pull_request:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: 18
+
+jobs:
+  Frontend-Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # setting up node.js environment
+      - name: Node.js environment setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: $NODE_VERSION
+      # Installing dependencies
+      - name: Install dependencies
+        run: npm ci
+      # Run the linter
+      - name: Linting
+        run: npm run lint
+  Frontend-Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # setting up node.js environment
+      - name: Node.js environment setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: $NODE_VERSION
+      # Installing dependencies
+      - name: Install dependencies
+        run: npm ci
+      # Run the tests
+      - name: Testing
+        run: npm test
+  Frontend-Build:
+    needs: [Frontend-Lint, Frontend-Test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # setting up node.js environment
+      - name: Node.js environment setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: $NODE_VERSION
+      # Installing dependencies
+      - name: Install dependencies
+        run: npm ci
+      # Run the tests
+      - name: Building
+        run: npm run build
