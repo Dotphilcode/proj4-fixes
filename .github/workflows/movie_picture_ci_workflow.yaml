@@ -2,10 +2,12 @@ name:  movie-picture-workflow
 
 # Triggers (manual & auto)
 on:
-  workflow_dispatch
+  workflow_dispatch:
   pull_request:
     branches:
       - master
+
+
 
 env:
   NODE_VERSION: 18
