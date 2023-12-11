@@ -37,9 +37,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-      # # Installing dependencies
-      # - name: Install dependencies
-      #   run: cd frontend && npm ci
+      # Installing dependencies
+      - name: Install dependencies
+        run: cd frontend && npm ci
       # Run the tests
       - name: Testing
         run: cd frontend && npm test
