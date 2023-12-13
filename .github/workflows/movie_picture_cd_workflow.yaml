@@ -1,4 +1,4 @@
-name: movie-picture-workflow
+name: movie-picture-frontend-cd-workflow
 
 # Triggers (manual & auto)
 on:
@@ -26,14 +26,14 @@ jobs:
       - name: Install dependencies
         run: cd frontend && npm ci
   Frontend-Lint:
-    needs: [Frontend-Setup]
+    needs: Frontend-Setup
     runs-on: ubuntu-latest
     steps:
       # Run the linter
       - name: Linting
         run: cd frontend && npm run lint
   Frontend-Test:
-    needs: [Frontend-Setup]
+    needs: Frontend-Setup
     runs-on: ubuntu-latest
     steps:
       # Run the tests
