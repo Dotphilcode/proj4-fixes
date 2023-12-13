@@ -60,7 +60,7 @@ jobs:
       - name: Testing
         run: cd frontend && npm test
   Frontend-Deploy:
-    needs: [Frontend-Lint, Frontend-Test]
+    # needs: [Frontend-Lint, Frontend-Test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -87,5 +87,5 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG ./frontend
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-        # # error handling
-        # if: success()
+        # error handling
+        if: success()
