@@ -1,0 +1,71 @@
+name: movie-picture-workflow
+
+# Triggers (manual & auto)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPO: movie-picture-project
+
+jobs:
+  Frontend-Setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # setting up node.js environment
+      - name: Node.js environment setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      # Installing dependencies
+      - name: Install dependencies
+        run: cd frontend && npm ci
+  Frontend-Lint:
+    needs: [Frontend-Setup]
+    runs-on: ubuntu-latest
+    steps:
+      # Run the linter
+      - name: Linting
+        run: cd frontend && npm run lint
+  Frontend-Test:
+    needs: [Frontend-Setup]
+    runs-on: ubuntu-latest
+    steps:
+      # Run the tests
+      - name: Testing
+        run: cd frontend && npm test
+  Frontend-Deploy:
+    needs: [Frontend-Lint, Frontend-Test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: ${{ env.ECR_REPO }}-alias
+          REPOSITORY: ${{ env.ECR_REPO }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG ./frontend
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+        # error handling
+        if: success()
