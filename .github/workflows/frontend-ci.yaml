@@ -58,8 +58,7 @@ jobs:
       - name: Testing
         run: cd frontend && npm run test
   Frontend-Build:
-    # needs: [Frontend-Lint, Frontend-Test]
-    needs: [Frontend-Lint]
+    needs: [Frontend-Lint, Frontend-Test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -81,4 +80,4 @@ jobs:
         run: cd frontend && npm ci
       # Build the code
       - name: Code build
-        run: cd frontend && npm run build
+        run: cd frontend && npm run update-browserslist && npm run build
