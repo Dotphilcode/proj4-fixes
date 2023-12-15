@@ -12,19 +12,6 @@ env:
   ECR_REPO: movie-picture-project
 
 jobs:
-  # Frontend-Setup:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     # setting up node.js environment
-  #     - name: Node.js environment setup
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 18
-  #     # Installing dependencies
-  #     - name: Install dependencies
-  #       run: cd frontend && npm ci
   Frontend-Lint:
     # needs: [Frontend-Setup]
     runs-on: ubuntu-latest
