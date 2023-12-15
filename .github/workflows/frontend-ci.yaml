@@ -34,29 +34,29 @@ jobs:
       # Run the linter
       - name: Linting
         run: cd frontend && npm run lint
-  # Frontend-Test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     # set up node.js environment
-  #     - name: Node.js environment setup
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: ${{ env.NODE_VERSION }}
-  #     # Restore cache && Install dependencies
-  #     - name: Cache restore
-  #       uses: ylemkimon/cache-restore@v2
-  #       with:
-  #         path: ~/.npm
-  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-node-
-  #     - name: Install dependencies
-  #       run: cd frontend && npm ci
-  #     # Run the tests
-  #     - name: Testing
-  #       run: cd frontend && npm run test
+  Frontend-Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      # set up node.js environment
+      - name: Node.js environment setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # Restore cache && Install dependencies
+      - name: Cache restore
+        uses: ylemkimon/cache-restore@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: cd frontend && npm ci
+      # Run the tests
+      - name: Testing
+        run: cd frontend && npm run test
   Frontend-Build:
     # needs: [Frontend-Lint, Frontend-Test]
     needs: [Frontend-Lint]
