@@ -12,7 +12,7 @@ env:
   AWS_REGION: us-west-2
   ECR_REPO: movie-picture-project-repo
   REACT_API_URL: testAPI
-  ECR_CLUSTER_NAME: movie-picture-project-cluster
+  EKS_CLUSTER_NAME: movie-picture-project-cluster
 
 jobs:
   Frontend-Lint:
@@ -96,7 +96,7 @@ jobs:
         # error handling
         if: success()
       - name: Update kube config
-        run: aws eks update-kubeconfig --name ${{ env.ECR_CLUSTER_NAME }}
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }}
       - name: Deploy to EKS
         run: |
-          kubectl apply -k ./frontend/k8s
+          kubectl apply -k .
