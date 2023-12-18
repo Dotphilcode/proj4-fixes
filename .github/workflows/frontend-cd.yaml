@@ -99,6 +99,4 @@ jobs:
         run: aws eks update-kubeconfig --name ${{ env.ECR_CLUSTER_NAME }}
       - name: Deploy to EKS
         run: |
-          kubectl apply -k ./k8s
-# docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_API_URL }} -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG ./frontend
-# docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          kubectl apply -k ./frontend/k8s
