@@ -17,5 +17,7 @@ spec:
       containers:
         - name: frontend
           image: frontend
+          # from primus learning
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
