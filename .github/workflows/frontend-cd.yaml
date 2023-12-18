@@ -99,6 +99,6 @@ jobs:
         run: aws eks update-kubeconfig --name ${{ env.ECR_CLUSTER_NAME }}
       - name: Deploy to EKS
         run: |
-          kubectl apply -k ./frontend
+          kubectl apply -k ./frontend/k8s
 
-# kubectl apply -k ./frontend/k8s --validate=false 
+# kubectl apply -k ./frontend/k8s --validate=false
