@@ -11,6 +11,7 @@ env:
   AWS_REGION: us-west-2
   ECR_REPO: movie-picture-backend-repo
   EKS_CLUSTER_NAME: movie-picture-backend-cluster
+  PYTHON_VERSION: "3.9"
 
 jobs:
   Backend-Lint:
@@ -22,16 +23,19 @@ jobs:
       - name: python environment setup
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip' # caching pip dependencies
       # python dependencies
-      - name: caching pip dependencies
-        run: pip install -r backend/requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
       # Lint with flake8
       - name: code linting
-        uses: advanced-security/python-lint-code-scanning-action@v1
-        with:
-          linter: flake8
+        uses: py-actions/flake8@v2
+        # uses: advanced-security/python-lint-code-scanning-action@v1
+        # with:
+        #   linter: flake8
 
   Backend-Test:
     runs-on: ubuntu-latest
@@ -42,7 +46,7 @@ jobs:
       - name: python environment setup
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip' # caching pip dependencies
       # python dependencies
       - name: caching pip dependencies
