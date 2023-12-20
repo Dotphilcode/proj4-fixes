@@ -60,7 +60,7 @@ jobs:
           cd backend && pip install pytest
           pytest
 
-  Backend-Build & Deploy:
+  Backend-Build-and-Deploy:
     needs: [Backend-Lint, Backend-Test]
     runs-on: ubuntu-latest
     steps:
