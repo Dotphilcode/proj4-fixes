@@ -93,6 +93,7 @@ jobs:
         with:
           version: 'latest' # default is latest stable
         id: kubectl-tool-installer
+        run: kubectl version
       # - name: Check kubectl version
       #   run: |
       #     kubectl version
