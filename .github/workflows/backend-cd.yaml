@@ -100,9 +100,9 @@ jobs:
         with:
           version: 'latest' # default is latest stable
         id: kubectl-tool-installer
-      - name: Check kubectl version
-        run: |
-          kubectl version
+      # - name: Check kubectl version
+      #   run: |
+      #     kubectl version
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
       - name: Deploy to EKS
