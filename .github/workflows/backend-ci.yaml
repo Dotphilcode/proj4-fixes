@@ -8,7 +8,9 @@ on:
       - master
 
 env:
-  NODE_VERSION: 18
+  AWS_REGION: us-west-2
+  ECR_REPO: movie-picture-backend-repo
+  EKS_CLUSTER_NAME: movie-picture-backend-cluster
 
 jobs:
   Backend-Lint:
@@ -16,68 +18,74 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # set up node.js environment
-      - name: Node.js environment setup
-        uses: actions/setup-node@v4
+      # set up python environment
+      - name: python environment setup
+        uses: actions/setup-python@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      # Restore cache && Install dependencies
-      - name: Cache restore
-        uses: ylemkimon/cache-restore@v2
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      # python dependencies
+      - name: caching pip dependencies
+        run: cd backend && pip install -r requirements.txt
+      # Lint with flake8
+      - name: code linting
+        use: advanced-security/python-lint-code-scanning-action@v1
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: cd backend && npm ci
-      # Run the linter
-      - name: Linting
-        run: cd backend && npm run lint
+          linter: flake8
+
   Backend-Test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # set up node.js environment
-      - name: Node.js environment setup
-        uses: actions/setup-node@v4
+      # set up python environment
+      - name: python environment setup
+        uses: actions/setup-python@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      # Restore cache && Install dependencies
-      - name: Cache restore
-        uses: ylemkimon/cache-restore@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: cd backend && npm ci
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      # python dependencies
+      - name: caching pip dependencies
+        run: cd backend && pip install -r requirements.txt
       # Run the tests
-      - name: Testing
-        run: cd backend && npm run test
-  backend-Build:
-    needs: [Backend-Lint, Backend-Test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      # set up node.js environment
-      - name: Node.js environment setup
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      # Restore cache && Install dependencies
-      - name: Cache restore
-        uses: ylemkimon/cache-restore@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: cd backend && npm ci
-      # Build the code
-      - name: Code build
-        run: cd backend && npm run build
+      - name: Test with pytest
+        run: |
+          cd backend && pip install pytest
+          pytest
+
+  # Backend-Build:
+  #   needs: [Backend-Lint, Backend-Test]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     # Install kubectl
+  #     - name: Install kubectl
+  #       uses: azure/setup-kubectl@v3
+  #       with:
+  #         version: 'latest' # default is latest stable
+  #       id: kubectl-tool-installer
+  #     - name: Check kubectl version
+  #       run: |
+  #         kubectl version
+  #     # Configure AWS credentials
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v2
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+  #         aws-region: ${{ env.AWS_REGION }}
+  #     # AWS ECR Login
+  #     - name: Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v2
+  #     - name: Build, tag, and push docker image to Amazon ECR
+  #       env:
+  #         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #         REPOSITORY: ${{ env.ECR_REPO }}
+  #         IMAGE_TAG: ${{ github.sha }}
+  #       run: |
+  #         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./backend
+  #         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  #       if: success()   # error handling
