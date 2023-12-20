@@ -60,7 +60,7 @@ jobs:
           cd backend && pip install pytest
           pytest
 
-  Backend-Build:
+  Backend-Build & Deploy:
     needs: [Backend-Lint, Backend-Test]
     runs-on: ubuntu-latest
     steps:
@@ -87,13 +87,6 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./backend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         if: success()   # error handling
-
-  Backend-Deploy:
-    needs: [Backend-Build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
       # Install kubectl
       - name: Install kubectl
         uses: azure/setup-kubectl@v3

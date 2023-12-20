@@ -89,8 +89,7 @@ jobs:
         run: |
           docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_API_URL }} -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./frontend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        # error handling
-        if: success()
+        if: success()   # error handling
       # Install kubectl
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
