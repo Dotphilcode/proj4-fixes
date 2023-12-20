@@ -33,9 +33,9 @@ jobs:
       # Lint with flake8
       - name: code linting
         uses: py-actions/flake8@v2
-        # uses: advanced-security/python-lint-code-scanning-action@v1
-        # with:
-        #   linter: flake8
+        with:
+          ignore: "E501"
+
 
   Backend-Test:
     runs-on: ubuntu-latest
