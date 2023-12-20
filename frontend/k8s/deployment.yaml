@@ -17,7 +17,7 @@ spec:
       containers:
         - name: frontend
           # image: frontend
-          image: 345619025376.dkr.ecr.us-west-2.amazonaws.com/movie-picture-project-repo:${{ github.sha }}
+          image: 345619025376.dkr.ecr.us-west-2.amazonaws.com/movie-picture-frontend-repo:${{ github.sha }}
           # # from primus learning
           imagePullPolicy: IfNotPresent   #Always
           ports:

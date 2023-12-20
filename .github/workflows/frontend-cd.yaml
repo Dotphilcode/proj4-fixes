@@ -3,7 +3,9 @@ name: Frontend Continuous Deployment
 # Triggers (manual & auto)
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - master
 
@@ -61,21 +63,12 @@ jobs:
       # Run the tests
       - name: Testing
         run: cd frontend && npm run test
-  Frontend-Deploy:
+  Frontend-Build-and-Deploy:
     needs: [Frontend-Lint, Frontend-Test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # Install kubectl
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest' # default is latest stable
-        id: kubectl-tool-installer
-      - name: Check kubectl version
-        run: |
-          kubectl version
       # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -98,6 +91,15 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         # error handling
         if: success()
+      # Install kubectl
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest' # default is latest stable
+        id: kubectl-tool-installer
+      - name: Check kubectl version
+        run: |
+          kubectl version
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
       - name: Deploy to EKS

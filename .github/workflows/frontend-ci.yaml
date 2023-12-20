@@ -9,6 +9,9 @@ on:
 
 env:
   NODE_VERSION: 18
+  AWS_REGION: us-west-2
+  ECR_REPO: movie-picture-frontend-repo
+  REACT_API_URL: http://localhost:5000  #update this
 
 jobs:
   Frontend-Lint:
@@ -63,21 +66,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      # set up node.js environment
-      - name: Node.js environment setup
-        uses: actions/setup-node@v4
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      # Restore cache && Install dependencies
-      - name: Cache restore
-        uses: ylemkimon/cache-restore@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Install dependencies
-        run: cd frontend && npm ci
-      # Build the code
-      - name: Code build
-        run: cd frontend && npm run build
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+      # AWS ECR Login
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPO }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --build-arg REACT_APP_MOVIE_API_URL=${{ env.REACT_API_URL }} -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./frontend
+        # error handling
+        if: success()

@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: backend
-          image: backend
+          image: 345619025376.dkr.ecr.us-west-2.amazonaws.com/movie-picture-backend-repo:${{ github.sha }}
           ports:
             - containerPort: 5000
