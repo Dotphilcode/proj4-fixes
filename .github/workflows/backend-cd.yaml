@@ -104,8 +104,15 @@ jobs:
       - name: Print kubectl configuration
         run: kubectl config view
       # DEBUGGING
-      - name: Print Kubernetes cluster info
-        run: kubectl cluster-info
+      - name: Debugging info
+        run: |
+          echo "AWS_REGION: $AWS_REGION"
+          echo "EKS_CLUSTER_NAME: $EKS_CLUSTER_NAME"
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+          echo "AWS_SESSION_TOKEN: $AWS_SESSION_TOKEN"
+          kubectl version
+          kubectl cluster-info dump
       - name: Deploy to EKS
         run: |
           kustomize build ./backend/k8s | kubectl apply -f -
