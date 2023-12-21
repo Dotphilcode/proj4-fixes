@@ -14,6 +14,7 @@ env:
   ECR_REPO: movie-picture-backend-repo
   EKS_CLUSTER_NAME: movie-picture-backend-cluster
   PYTHON_VERSION: "3.9"
+  KUBECTL_VERSION: "v1.28.0"
 
 jobs:
   Backend-Lint:
@@ -74,9 +75,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
-      # DEBUGGING
-      - name: Print AWS CLI configuration
-        run: aws configure list
       # AWS ECR Login
       - name: Login to Amazon ECR
         id: login-ecr
@@ -94,21 +92,12 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.28.0' # default is latest stable
+          version: ${{ env.KUBECTL_VERSION }} # default is latest stable
         id: kubectl-tool-installer
       - name: Print kubectl version
         run: kubectl version --client
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
-      # DEBUGGING
-      - name: Print kubectl configuration
-        run: kubectl config view
-      # DEBUGGING
-      - name: Debugging info
-        run: kubectl cluster-info
-      # DEBUGGING
-      - name: Print AWS CLI version
-        run: aws --version     
       - name: Deploy to EKS
         run: |
           kustomize build ./backend/k8s | kubectl apply -f -

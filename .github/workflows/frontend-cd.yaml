@@ -15,6 +15,7 @@ env:
   ECR_REPO: movie-picture-frontend-repo
   REACT_API_URL: http://localhost:5000  #update this
   EKS_CLUSTER_NAME: movie-picture-frontend-cluster
+  KUBECTL_VERSION: "v1.28.0"
 
 jobs:
   Frontend-Lint:
@@ -94,7 +95,7 @@ jobs:
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.28.0' # default is latest stable
+          version: ${{ env.KUBECTL_VERSION }} # default is latest stable
         id: kubectl-tool-installer
       - name: Print kubectl version
         run: kubectl version --client
