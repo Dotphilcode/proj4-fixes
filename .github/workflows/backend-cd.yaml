@@ -93,7 +93,6 @@ jobs:
         with:
           version: 'v1.28.0' # default is latest stable
         id: kubectl-tool-installer
-        run: kubectl version
       - name: Print kubectl version
         run: kubectl version --client
       - name: Update kube config
