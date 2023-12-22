@@ -14,7 +14,7 @@ env:
   ECR_REPO: movie-picture-backend-repo
   EKS_CLUSTER_NAME: movie-picture-backend-cluster
   PYTHON_VERSION: "3.9"
-  KUBECTL_VERSION: "v1.28"    # same version as k8 on EKS
+  KUBECTL_VERSION: "v1.28.0"    # same version as k8 on EKS
 
 jobs:
   Backend-Lint:
