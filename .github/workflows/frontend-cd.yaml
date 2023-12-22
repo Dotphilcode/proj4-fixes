@@ -99,6 +99,11 @@ jobs:
         id: kubectl-tool-installer
       - name: Print kubectl version
         run: kubectl version --client
+      - name: Update AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+          aws --version
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
       - name: Print AWS CLI configuration # DEBUGGING 1
