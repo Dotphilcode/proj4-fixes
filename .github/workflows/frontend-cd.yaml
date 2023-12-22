@@ -101,6 +101,20 @@ jobs:
         run: kubectl version --client
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+      - name: Print AWS CLI configuration # DEBUGGING 1
+        run: aws configure list
+      - name: Print kubectl configuration # DEBUGGING 2
+        run: kubectl config view
+      - name: Print AWS CLI version # DEBUGGING 3
+        run: aws --version
+      - name: Debugging info # DEBUGGING 4
+        run: |
+          echo "AWS_REGION: $AWS_REGION"
+          echo "EKS_CLUSTER_NAME: $EKS_CLUSTER_NAME"
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+          kubectl version
+          kubectl cluster-info dump
       - name: Verify cluster configuration  # for Debugging
         run: kubectl cluster-info
       - name: Deploy to EKS
