@@ -14,7 +14,7 @@ env:
   ECR_REPO: movie-picture-backend-repo
   EKS_CLUSTER_NAME: movie-picture-backend-cluster
   PYTHON_VERSION: "3.9"
-  KUBECTL_VERSION: "v1.28.0"
+  KUBECTL_VERSION: "v1.28"    # same version as k8 on EKS
 
 jobs:
   Backend-Lint:
@@ -98,6 +98,8 @@ jobs:
         run: kubectl version --client
       - name: Update kube config
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+      - name: Verify cluster configuration  # for Debugging
+        run: kubectl cluster-info
       - name: Deploy to EKS
         run: |
           kustomize build ./backend/k8s | kubectl apply -f -
