@@ -9,7 +9,7 @@ on:
 
 env:
   NODE_VERSION: 18
-  AWS_REGION: us-west-2
+  AWS_REGION: us-east-1
   ECR_REPO: movie-picture-frontend-repo
   REACT_API_URL: http://localhost:5000  #update this
 
